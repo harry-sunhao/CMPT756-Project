@@ -3,63 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <title>CMPT756 Prjoect</title>
-    <script>
-    function generateImage() {
-    var start = performance.now();
-    var num_images = document.getElementById("num_images").value;
-
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "/generate", true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-
-
-    xhr.onload = function () {
-        if (xhr.status === 200) {
-            var response = JSON.parse(xhr.responseText);
-            var end = performance.now();
-            var duration = (end - start).toFixed(6);
-            if(response.time){
-                var process_time = parseFloat(response.time); 
-                var latency = (duration - process_time).toFixed(2);
-            }
-            else
-            {
-                console.error('Error in response', response.error);
-            }
-            document.getElementById('trip-time').innerHTML = '<p>Round trip time: '+ duration + ' ms</br>Process Time: '+process_time+' ms</br>Latency Time: '+latency +' ms</p>';
-            console.log("Round trip time: " + duration + "ms");
-            console.log("Process time: " + process_time + "ms");
-            if (response.src) {
-                var src = 'data:image/png;base64,' + response.src;
-                document.getElementById('generated-image').innerHTML = '<img src="' + src + '" alt="Generated Image" style="width: 50%;">';
-            } else {
-                console.error('Error in response', response.error);
-            }
-        } else {
-            console.error("Error", xhr.statusText);
+     <style>
+        .image-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-start;
         }
-    };
 
+        .image-section {
+            margin: 10px;
+        }
+    </style>
+    <script>
+        function generateImage() {
+            var start = performance.now();
+            var num_images = document.getElementById("num_images").value;
 
-    {#var data = JSON.stringify({ "num_images": num_images, "start_time": start.getTime() / 1000 });#}
-     var data = JSON.stringify({ "num_images": num_images});
-    xhr.send(data);
-    return false;
-}
+            var xhr1 = new XMLHttpRequest();
+            var xhr2 = new XMLHttpRequest();
+
+            // 配置第一个请求
+            xhr1.open("POST", "https://us-central1-corded-sunlight-417700.cloudfunctions.net/function-1", true);
+            xhr1.setRequestHeader("Content-Type", "application/json");
+            xhr1.onload = function () {
+                handleResponse(xhr1, start,1);
+            };
+
+            // 配置第二个请求
+            xhr2.open("POST", "/generate", true); // 替换为第二个 URL
+            xhr2.setRequestHeader("Content-Type", "application/json");
+            xhr2.onload = function () {
+                handleResponse(xhr2, start,2);
+            };
+
+            var data = JSON.stringify({"num_images": num_images});
+
+            // 发送请求
+            xhr1.send(data);
+            xhr2.send(data);
+
+            return false;
+        }
+
+        function handleResponse(xhr, start, id) {
+            if (xhr.status === 200) {
+                var response = JSON.parse(xhr.responseText);
+                var end = performance.now();
+                var duration = (end - start).toFixed(6);
+                if (response.time && response.src) {
+                    var process_time = parseFloat(response.time);
+                    var latency = (duration - process_time).toFixed(2);
+                    console.log("Round trip time: " + duration + "ms");
+                    console.log("Process time: " + process_time + "ms");
+                    var src = 'data:image/png;base64,' + response.src;
+                    document.getElementById('generated-image' + id).innerHTML = '<img src="' + src + '" alt="Generated Image" style="width: 50%;">';
+                    document.getElementById('trip-time' + id).innerHTML = '<p>Round trip time: ' + duration + ' ms</br>Process Time: ' + process_time + ' ms</br>Latency Time: ' + latency + ' ms</p>';
+
+                } else {
+                    console.error('Error in response', response.error);
+                }
+            } else {
+                console.error("Error", xhr.statusText);
+            }
+        }
 
 
     </script>
 </head>
 <body>
-    <h1>Generated image</h1>
+    <h1>Generated Image</h1>
     <form onsubmit="return generateImage()">
-        <label for="num_images">Number of image:</label><br>
+        <label for="num_images">Number of Images:</label><br>
         <input type="text" id="num_images" name="num_images"><br>
         <input type="submit" value="Go!">
     </form>
-    <h2>Time:</h2>
-    <div id="trip-time"></div>
-    <h2>Image:</h2>
-    <div id="generated-image"></div>
+
+    <div class="image-container">
+        <div class="image-section">
+            <h2>ServerLess Time:</h2>
+            <div id="trip-time1"></div>
+            <h2>ServerLess Image:</h2>
+            <div id="generated-image1"></div>
+        </div>
+
+        <div class="image-section">
+            <h2>Docker Time:</h2>
+            <div id="trip-time2"></div>
+            <h2>Docker Image:</h2>
+            <div id="generated-image2"></div>
+        </div>
+    </div>
 </body>
 </html>

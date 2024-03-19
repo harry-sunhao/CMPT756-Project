@@ -2,14 +2,13 @@ import base64
 import io
 import os
 import time
-
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 from flask import Flask, request, Response, render_template, jsonify
 import torch
 import matplotlib.pyplot as plt
 import torchvision
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='static')
 
 # 加载模型
 torch.hub.set_dir('./')
@@ -31,7 +30,6 @@ def generate_image():
     start_time = time.time()
     if num_images <= 0:
         num_images = 1
-
     noise, _ = model.buildNoiseData(num_images)
     with torch.no_grad():
         generated_images = model.test(noise)
