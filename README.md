@@ -38,6 +38,8 @@ In our evaluation, low latency signals fast server response. High latency prompt
 
 <div style="text-align:center"><img src="https://i.imgur.com/Uc2RdXz.png" alt="Response Time" title="Response Time" style="width:50%;height:100%;display:inline-block"><img src="https://i.imgur.com/ojtMba3.png" alt="Latency" title="Latency" style="width:50%;height:100%;display:inline-block"><img src="https://i.imgur.com/HaSTGMI.png" alt="CPU Usage" title="CPU Usage" style="width:50%;display:inline-block"><img src="https://i.imgur.com/S5PG8Wq.png" alt="Memory Usage" title="Memory Usage" style="width:50%;display:inline-block">Figure 2. Evaluation Measurements</div>
 
+
+
 ## **Analysis**
 
 The analysis of five images highlights the advantages of serverless architecture over Docker across multiple performance metrics:
@@ -47,4 +49,4 @@ The analysis of five images highlights the advantages of serverless architecture
 - CPU Usage: Serverless architecture exhibits lower CPU usage compared to Docker, leading to more efficient resource utilization and reduced operational costs. Its ability to dynamically allocate resources based on workload demands contributes to this efficiency.
 - Connect Time: Containers have a mean connection time of 58.94 ms with a standard deviation of 18.61 ms, while serverless exhibits a slightly higher mean connection time of 62.28 ms with a lower standard deviation of 14.52 ms. This suggests that serverless architecture, despite having a slightly longer average connection time, offers more consistent connectivity compared to containers.
 
-In summary, serverless architecture offers superior performance in latency, response time, and resource utilization compared to Docker. Its scalability, cost-effectiveness, and operational simplicity make it the preferred choice for image generation tasks.
+In conclusion, when comparing serverless architecture and Docker for deploying machine learning models, serverless clearly excels in latency, response time, and resource efficiency. Additionally, a cost comparison reveals that Cloud Functions, with its significantly lower cost of \$0.23 compared to \$3.15 for Cloud Run, stands out as the more economical option. The scalability and ease of operation of Cloud Functions further solidify it as the optimal architecture for tasks like image generation.
